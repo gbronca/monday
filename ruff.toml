@@ -40,8 +40,13 @@ target-version = "py311"
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
-select = ["E", "F", "B", "Q", "S", "I", "W"]
+select = ["E", "F", "B", "Q", "S", "I", "W", "D", "N", "UP", "ASYNC", "ANN", "TRIO", "BLE", "FBT", "A", "COM", "C4", "DTZ", "EM"]
+# select = ["All"]
+
 ignore = []
+
+[pydocstyle]
+convention = "google"
 
 [format]
 # Like Black, use double quotes for strings.
