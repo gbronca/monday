@@ -1,18 +1,18 @@
+"""Provides utility functions for Monday.com API."""
 import json
 
 
-def monday_json_stringify(value):
-    """Converts a python object to a JSON string that can be used in a monday.com query
+def monday_json_stringify(value: object) -> str:
+    """Convert a python object to a compatible JSON string.
 
     Args:
-        value (object): Monday query string
+        value (oject): Monday query string
 
     Returns:
         json: JSON string
-    """
 
-    # Monday's API requires a JSON encoded string for JSON values. json.dumps and
-    # JSON.stringify don't really work for this.
-    # The only thing that works is a JSON encoded, JSON encoded string.
+    """
+    # Monday's API requires a JSON encoded string for JSON values. json.dumps() doesn't
+    # work. The only thing that works is a JSON encoded, JSON encoded string.
 
     return json.dumps(json.dumps(value))
