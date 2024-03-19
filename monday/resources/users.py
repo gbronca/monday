@@ -10,12 +10,13 @@ class Users(TypedDict):
     """Type definition for users."""
 
     id: list | str
-    kind: str
-    newest_first: bool
-    limit: int
     emails: list | str
-    page: int
+    kind: str
+    limit: int
     name: str
+    newest_first: bool
+    non_active: bool
+    page: int
 
 
 class UserResource(BaseResource):
@@ -49,32 +50,46 @@ class UserResource(BaseResource):
         {
             users (%s) {
                 id
-                name
-                email
-                enabled
                 birthday
                 country_code
                 created_at
                 current_language
+                email
+                enabled
                 is_admin
                 is_guest
                 is_pending
-                is_view_only
                 is_verified
+                is_view_only
                 join_date
                 last_activity
-                time_zone_identifier
-                title
+                location
+                mobile_phone
+                name
+                out_of_office {
+                    active
+                    disable_notifications
+                    end_date
+                    start_date
+                    type
+                }
+                phone
+                photo_original
+                photo_small
                 teams {
                     id
                     name
                 }
+                time_zone_identifier
+                title
+                url
+                utc_hours_diff
             }
         }""" % ", ".join(
             [
-                "%s: %s" % (arg, json.dumps(kwargs.get(arg)))
+                f"{arg}: {json.dumps(kwargs.get(arg))}"
                 if arg != "newest_first"
-                else "%s: %s" % (arg, str(kwargs.get(arg)).lower())
+                else f"{arg}: {str(kwargs.get(arg)).lower()}"
                 for arg in kwargs
             ],
         )
