@@ -6,10 +6,8 @@ from monday.resources.base import BaseResource
 class VersionResource(BaseResource):
     """Class for interacting with the Monday.com API's Users endpoint."""
 
-    def fetch_version(self: "VersionResource") -> dict:
-        """Querying versions will return metadata about all available API versions.
-
-        This method does not accept any arguments and returns an array
+    def fetch_versions(self: "VersionResource") -> dict:
+        """Versions will return metadata about all available API versions.
 
         Returns:
             dict: dict response from the monday.com GraphQL API
@@ -17,6 +15,23 @@ class VersionResource(BaseResource):
         query = """query
         {
             versions {
+                kind
+                value
+                display_name
+            }
+        }"""
+
+        return self.client.execute(query)
+
+    def fetch_version(self: "VersionResource") -> dict:
+        """Version will return metadata about the API version used to make a request.
+
+        Returns:
+            dict: dict response from the monday.com GraphQL API
+        """
+        query = """query
+        {
+            version {
                 kind
                 value
                 display_name
