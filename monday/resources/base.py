@@ -15,6 +15,7 @@ class BaseResource:
         api_key: str,
         api_version: str | None = None,
     ) -> None:
+        """Initialize the BaseResource class."""
         self.api_key = api_key
         self.api_version = api_version
         self.client = GraphQLClient(
