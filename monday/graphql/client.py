@@ -1,4 +1,5 @@
 """Provide a GraphQL client to connect to Monday.com's GraphQL API."""
+
 import json
 
 import requests  # type: ignore
