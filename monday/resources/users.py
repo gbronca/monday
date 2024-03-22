@@ -1,17 +1,17 @@
 """Class for interacting with the Monday.com API's Users endpoint."""
 
 import json
-from typing import TypedDict
+from typing import Literal, TypedDict, Unpack
 
 from monday.resources.base import BaseResource
 
 
-class Users(TypedDict):
-    """Type definition for users."""
+class User(TypedDict, total=False):
+    """Represents a user with optional attributes."""
 
-    id: list | str
-    emails: list | str
-    kind: str
+    emails: list[str] | str
+    ids: list[str] | str
+    kind: Literal["all", "non_guests", "guests", "non_pending"]
     limit: int
     name: str
     newest_first: bool
@@ -22,7 +22,7 @@ class Users(TypedDict):
 class UserResource(BaseResource):
     """Class for interacting with the Monday.com API's Users endpoint."""
 
-    def fetch_users(self: "UserResource", **kwargs: Users) -> dict:
+    def fetch_users(self: "UserResource", **kwargs: Unpack[User]) -> dict:
         """Fetch user(s) data from Monday.com.
 
         Every user in monday.com is a part of an account (i.e an organization) and
@@ -31,24 +31,32 @@ class UserResource(BaseResource):
         Querying users returns one or multiple users.
 
         Kwargs:
+            emails ([str]): A list of users' emails.
             ids ([str]): A list of users' unique identifiers.
             kind (str): The kind of users you want to search by:
-                all,
-                non_guests,
-                guests,
-                non_pending.
-            newest_first (bool): Get the recently created users at the top of the list.
+                all, non_guests, guests, non_pending.
             limit (int): Number of users to get.
-            emails ([str]): A list of users' emails.
-            page (int): The page number to return. Starts at 1.
             name (str): A fuzzy search of users by name.
+            newest_first (bool): Get the recently created users at the top of the list.
+            non-active (bool): Returns the account's non-active users.
+            page (int): The page number to return. Starts at 1.
 
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
+        arguments = []
+        if kwargs:
+            for key, value in kwargs.items():
+                if key in ["newest_first", "non_active"]:
+                    arguments.append(f"{key}: {str(value).lower()}")
+                elif key == "kind":
+                    arguments.append(f"{key}: {value}")
+                else:
+                    arguments.append(f"{key}: {json.dumps(value)}")
+
         query = """query
         {
-            users (%s) {
+            users %s {
                 id
                 birthday
                 country_code
@@ -85,14 +93,7 @@ class UserResource(BaseResource):
                 url
                 utc_hours_diff
             }
-        }""" % ", ".join(
-            [
-                f"{arg}: {json.dumps(kwargs.get(arg))}"
-                if arg != "newest_first"
-                else f"{arg}: {str(kwargs.get(arg)).lower()}"
-                for arg in kwargs
-            ],
-        )
+        }""" % (f"({", ".join(arguments)})" if arguments else "")
 
         return self.client.execute(query)
 
