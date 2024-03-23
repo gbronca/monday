@@ -6,9 +6,6 @@ import requests  # type: ignore
 
 from monday.exceptions import MondayError
 
-HEADER_NAME = "Authorization"
-API_VERSION_HEADER = "API-Version"
-
 
 class GraphQLClient:
     """GraphQL Client to connect to Monday GraphQL API."""
@@ -23,8 +20,6 @@ class GraphQLClient:
         self.endpoint = endpoint
         self.api_key = api_key
         self.api_version = api_version
-        self.header_name = HEADER_NAME
-        self.api_version_header = API_VERSION_HEADER
 
     def execute(
         self: "GraphQLClient",
@@ -53,10 +48,10 @@ class GraphQLClient:
         files = None
 
         if self.api_key:
-            headers[self.header_name] = self.api_key
+            headers["Authorization"] = self.api_key
 
         if self.api_version:
-            headers[self.api_version_header] = self.api_version
+            headers["API-Version"] = self.api_version
 
         if variables is None:
             headers.setdefault("Content-Type", "application/json")
