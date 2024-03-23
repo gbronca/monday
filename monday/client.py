@@ -1,10 +1,7 @@
 """Client for the Monday.com API."""
 
 from .__version__ import __version__
-from .resources import (
-    UserResource,
-    VersionResource,
-)
+from .resources import UserResource, VersionResource, WorkspaceResource
 
 
 class MondayClient:
@@ -17,6 +14,7 @@ class MondayClient:
     ) -> None:
         self.users = UserResource(api_key=api_key, api_version=api_version)
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
+        self.workspaces = WorkspaceResource(api_key=api_key, api_version=api_version)
 
     def __repr__(self: "MondayClient") -> str:  # noqa: D105
         return f"MondayClient {__version__}"

@@ -2,5 +2,6 @@
 
 from monday.resources.users import UserResource
 from monday.resources.versions import VersionResource
+from monday.resources.workspaces import WorkspaceResource
 
-__all__ = ["UserResource", "VersionResource"]
+__all__ = ["UserResource", "VersionResource", "WorkspaceResource"]
