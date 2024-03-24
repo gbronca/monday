@@ -111,3 +111,20 @@ class WorkspaceResource(BaseResource):
         }""" % {"name": name, "kind": kind, "description": description}  # noqa: UP031
 
         return self.client.execute(query)
+
+    def delete_workspace(self: "WorkspaceResource", workspace_id: str) -> dict:
+        """Allows you to delete a workspace.
+
+        Args:
+            workspace_id (str): The workspace's identifier.
+
+        Returns:
+            dict: dict response from the monday.com GraphQL API
+        """
+        query = """mutation {
+            delete_workspace ( workspace_id: "%(id)s") {
+                id
+            }
+        }""" % {"id": workspace_id}  # noqa: UP031
+
+        return self.client.execute(query)
