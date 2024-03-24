@@ -78,3 +78,36 @@ class WorkspaceResource(BaseResource):
         }""" % (f"({", ".join(arguments)})" if arguments else "")
 
         return self.client.execute(query)
+
+    def create_workspace(
+        self: "WorkspaceResource",
+        name: str,
+        kind: Literal["open", "closed"],
+        description: str = "",
+    ) -> dict:
+        """Allows you to create a new workspace.
+
+        After the mutation runs, you can create boards in the workspace.
+
+        Args:
+            name (str): The new workspace's name.
+            kind (str): The new workspace's kind: open or closed.
+            description (str, optional): The new workspace's description.
+
+        Returns:
+            dict: dict response from the monday.com GraphQL API
+        """
+        query = """mutation {
+            create_workspace (
+                name: "%(name)s",
+                kind: %(kind)s,
+                description: "%(description)s"
+                ) {
+                id
+                name
+                kind
+                description
+            }
+        }""" % {"name": name, "kind": kind, "description": description}  # noqa: UP031
+
+        return self.client.execute(query)
