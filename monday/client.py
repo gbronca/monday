@@ -1,7 +1,12 @@
 """Client for the Monday.com API."""
 
 from .__version__ import __version__
-from .resources import UserResource, VersionResource, WorkspaceResource
+from .resources import (
+    NotificationResource,
+    UserResource,
+    VersionResource,
+    WorkspaceResource,
+)
 
 
 class MondayClient:
@@ -12,6 +17,9 @@ class MondayClient:
         api_key: str,
         api_version: str | None = None,
     ) -> None:
+        self.notifications = NotificationResource(
+            api_key=api_key, api_version=api_version
+        )
         self.users = UserResource(api_key=api_key, api_version=api_version)
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
         self.workspaces = WorkspaceResource(api_key=api_key, api_version=api_version)
