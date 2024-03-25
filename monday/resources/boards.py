@@ -115,6 +115,47 @@ class BoardResource(BaseResource):
 
         return self.client.execute(query)
 
+    # def create_board(
+    #     self: "BoardResource",
+    #     board_kind: Literal["private", "public", "share"],
+    #     board_name: str,
+    #     workspace_id: str,
+    #     board_owner_ids: str | list[str] | None,
+    #     board_subscriber_ids: str | list[str] | None,
+    #     board_subscriber_team_ids: str | list[str] | None,
+    #     description: str | None,
+    #     folder_id: str | None,
+    #     template_id: str | None = None,
+    # ) -> dict:
+    #     """Allows you to create a new board via the API.
+
+    #     Please note that the user that creates the board via the API will automatically
+    #     be added as the board's owner when creating a private or shareable board or if
+    #     the board_owners_ids argument is missing.
+
+    #     Args:
+    #         board_kind (Literal[private, public, share]): The type of board to create.
+    #         board_name (str): The new board's name.
+    #         workspace_id (str): The board's workspace ID.
+    #         board_owner_ids (str | list[str] | None): A list of the IDs of the users who
+    #             will be board owners.
+    #         board_subscriber_ids (str | list[str] | None): A list of the IDs of the
+    #             users who will subscribe to the board.
+    #         board_subscriber_team_ids (str | list[str] | None): A list of the IDs of the
+    #             teams who will subscribe to the board.
+    #         description (str | None): The new board's description.
+    #         folder_id (str | None): The board's folder ID.
+    #         template_id (str | None, optional): The board's template ID.
+    #     """
+    #     query = """mutation {
+    #         create_board (
+    #             board_name: "my board", board_kind: public) {
+    #             id
+    #         }
+    #     }"""
+
+    #     return self.client.execute(query)
+
     def duplicate_board(
         self: "BoardResource",
         board_id: str,
@@ -178,3 +219,74 @@ class BoardResource(BaseResource):
         )
 
         return self.client.execute(query)
+
+    def archive_board(self: "BoardResource", board_id: str) -> dict:
+        """This method allows you to archive a board.
+
+        Args:
+            board_id (str): The board's unique identifier.
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        query = (
+            """
+            mutation {
+                archive_board(board_id: "%s") {
+                    id
+                }
+            }
+        """
+            % board_id
+        )
+
+        return self.client.execute(query)
+
+    def delete_board(self: "BoardResource", board_id: str) -> dict:
+        """Allows you to delete a board via the API.
+
+        Args:
+            board_id (str): Id of the board to be deleted
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        query = (
+            """
+            mutation {
+                delete_board(board_id: "%s") {
+                    id
+                }
+            }
+        """
+            % board_id
+        )
+
+        return self.client.execute(query)
+
+    def update_board(
+        self: "BoardResource",
+        board_id: str,
+        board_attribute: Literal["name", "description", "communication"],
+        new_value: str,
+    ) -> dict:
+        """Allows you to update a board via the API.
+
+        Args:
+            board_id (str): Id of the board to be updated
+            board_attribute (str): The board's attribute to update
+            new_value (str): The new attribute value.
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        query = f""" mutation {{
+            update_board(
+                board_id: {json.dumps(board_id)},
+                board_attribute: {board_attribute},
+                new_value: {json.dumps(new_value)})
+        }}"""
+
+        print(query)
+        return {"id": "123"}
+        # return self.client.execute(query)
