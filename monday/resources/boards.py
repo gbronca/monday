@@ -19,8 +19,20 @@ class BoardQuery(TypedDict, total=False):
     workspace_ids: list[str] | str
 
 
+class BoardCreate(TypedDict, total=False):
+    """Keyword Arguments for creating a board."""
+
+    board_owner_ids: str | list[str]
+    board_subscriber_ids: str | list[str]
+    board_subscriber_team_ids: str | list[str]
+    description: str
+    folder_id: str
+    template_id: str
+    workspace_id: str
+
+
 class BoardDuplicate(TypedDict, total=False):
-    """Represents a board with optional attributes."""
+    """Duplicates a board with optional attributes."""
 
     board_name: str
     workspace_id: str
@@ -115,46 +127,60 @@ class BoardResource(BaseResource):
 
         return self.client.execute(query)
 
-    # def create_board(
-    #     self: "BoardResource",
-    #     board_kind: Literal["private", "public", "share"],
-    #     board_name: str,
-    #     workspace_id: str,
-    #     board_owner_ids: str | list[str] | None,
-    #     board_subscriber_ids: str | list[str] | None,
-    #     board_subscriber_team_ids: str | list[str] | None,
-    #     description: str | None,
-    #     folder_id: str | None,
-    #     template_id: str | None = None,
-    # ) -> dict:
-    #     """Allows you to create a new board via the API.
+    def create_board(
+        self: "BoardResource",
+        board_name: str,
+        board_kind: Literal["private", "public", "share"],
+        **kwargs: Unpack[BoardCreate],
+    ) -> dict:
+        """Allows you to create a new board via the API.
 
-    #     Please note that the user that creates the board via the API will automatically
-    #     be added as the board's owner when creating a private or shareable board or if
-    #     the board_owners_ids argument is missing.
+        Please note that the user that creates the board via the API will automatically
+        be added as the board's owner when creating a private or shareable board or if
+        the board_owners_ids argument is missing.
 
-    #     Args:
-    #         board_kind (Literal[private, public, share]): The type of board to create.
-    #         board_name (str): The new board's name.
-    #         workspace_id (str): The board's workspace ID.
-    #         board_owner_ids (str | list[str] | None): A list of the IDs of the users who
-    #             will be board owners.
-    #         board_subscriber_ids (str | list[str] | None): A list of the IDs of the
-    #             users who will subscribe to the board.
-    #         board_subscriber_team_ids (str | list[str] | None): A list of the IDs of the
-    #             teams who will subscribe to the board.
-    #         description (str | None): The new board's description.
-    #         folder_id (str | None): The board's folder ID.
-    #         template_id (str | None, optional): The board's template ID.
-    #     """
-    #     query = """mutation {
-    #         create_board (
-    #             board_name: "my board", board_kind: public) {
-    #             id
-    #         }
-    #     }"""
+        board_kind (Literal[private, public, share]): The type of board to create.
+        board_name (str): The new board's name.
 
-    #     return self.client.execute(query)
+        Kwargs:
+            board_owner_ids (str | list[str] | None): A list of the IDs of the users who
+                will be board owners.
+            board_subscriber_ids (str | list[str] | None): A list of the IDs of the
+                users who will subscribe to the board.
+            board_subscriber_team_ids (str | list[str] | None): A list of the IDs of the
+                teams who will subscribe to the board.
+            description (str | None): The new board's description.
+            folder_id (str | None): The board's folder ID.
+            template_id (str | None): The board's template ID.
+            workspace_id (str | None): The board's workspace ID.
+        """
+        arguments = []
+        if kwargs:
+            convert_to_list = [
+                "board_owner_ids",
+                "board_subscriber_ids",
+                "board_subscriber_team_ids",
+            ]
+            for arg in convert_to_list:
+                if arg in kwargs and not isinstance(kwargs[arg], list):  # type: ignore
+                    kwargs[arg] = json.dumps([str(kwargs[arg])])  # type: ignore
+                elif arg in kwargs:
+                    kwargs[arg] = json.dumps(kwargs[arg])  # type: ignore
+
+            arguments = [
+                f"{key}: {value if key in convert_to_list else json.dumps(str(value))}"
+                for key, value in kwargs.items()
+            ]
+
+        optional_arg = ", ".join(arguments) if arguments else ""
+        query = f"""mutation {{
+            create_board (
+                board_name: "{board_name}", board_kind: {board_kind}, {optional_arg}) {{
+                id
+            }}
+        }}"""
+
+        return self.client.execute(query)
 
     def duplicate_board(
         self: "BoardResource",
