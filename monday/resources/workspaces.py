@@ -1,20 +1,10 @@
 """This module provides the Workspace class for querying workspaces."""
 
 import json
-from typing import Literal, TypedDict, Unpack
+from typing import Literal, Unpack
 
 from monday.resources.base import BaseResource
-
-
-class Workspace(TypedDict, total=False):
-    """Represents a workspace with optional attributes."""
-
-    ids: list[str] | str
-    kind: Literal["open", "closed"]
-    limit: int
-    state: Literal["all", "active", "archived", "deleted"]
-    order_by: Literal["created_at"]
-    page: int
+from monday.resources.types.workspaces import Workspace
 
 
 class WorkspaceResource(BaseResource):
@@ -109,6 +99,36 @@ class WorkspaceResource(BaseResource):
                 description
             }
         }""" % {"name": name, "kind": kind, "description": description}  # noqa: UP031
+
+        return self.client.execute(query)
+
+    def update_workspace(
+        self: "WorkspaceResource",
+        workspace_id: str,
+        attributes: str,
+    ) -> dict:
+        """Update a workspace via the API.
+
+        Args:
+            workspace_id (str): The identifier of the workspace to update.
+            attributes (str): The attribute to update in the workspace as a json string.
+                allowed keys: name, description, kind
+                e.g. {name:"Marketing team", description: "Marketing team workspace"}
+
+        Returns:
+            dict: The updated workspace information.
+        """
+        query = f"""mutation {{
+            update_workspace (
+                id: "{workspace_id}",
+                attributes: {attributes}
+            ) {{
+                id
+                name
+                kind
+                description
+            }}
+        }}"""
 
         return self.client.execute(query)
 
