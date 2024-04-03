@@ -1,43 +1,11 @@
 """This module provides the Board class for managing boards."""
 
 import json
-from typing import Literal, TypedDict, Unpack
+from typing import Literal, Unpack
 
 from monday.exceptions import ArgumentError
 from monday.resources.base import BaseResource
-
-
-class BoardQuery(TypedDict, total=False):
-    """Represents a board with optional attributes."""
-
-    board_kind: Literal["private", "public", "share"]
-    ids: list[str] | str
-    limit: int
-    order_by: Literal["created_at", "used_at"]
-    page: int
-    state: Literal["active", "all", "archived", "deleted"]
-    workspace_ids: list[str] | str
-
-
-class BoardCreate(TypedDict, total=False):
-    """Keyword Arguments for creating a board."""
-
-    board_owner_ids: str | list[str]
-    board_subscriber_ids: str | list[str]
-    board_subscriber_team_ids: str | list[str]
-    description: str
-    folder_id: str
-    template_id: str
-    workspace_id: str
-
-
-class BoardDuplicate(TypedDict, total=False):
-    """Duplicates a board with optional attributes."""
-
-    board_name: str
-    workspace_id: str
-    folder_id: str
-    keep_subscribers: bool
+from monday.resources.types.boards import BoardCreate, BoardDuplicate, BoardQuery
 
 
 class BoardResource(BaseResource):
@@ -85,10 +53,21 @@ class BoardResource(BaseResource):
                     type
                     updated_at
                     workspace_id
+                    columns {
+                        id
+                        title
+                        type
+                    }
                     creator {
                         id
                         name
                         email
+                    }
+                    groups {
+                        id
+                        title
+                        color
+                        position
                     }
                     owners {
                         id
@@ -100,26 +79,15 @@ class BoardResource(BaseResource):
                         name
                         email
                     }
-                    groups {
-                        id
-                        title
-                        color
-                        position
-                    }
-                    top_group {
-                        id
-                        title
-                        color
-                    }
                     tags {
                         id
                         name
                         color
                     }
-                    columns {
+                    top_group {
                         id
                         title
-                        type
+                        color
                     }
                 }
             }
@@ -224,69 +192,18 @@ class BoardResource(BaseResource):
             error = "folder_id is required if you are duplicating to another workspace"
             raise ArgumentError(error)
 
-        query = (
-            """
-            mutation {
+        query = f"""
+            mutation {{
                 duplicate_board(
-                board_id: "%(board_id)s",
-                duplicate_type: %(duplicate_type)s,
-                %(arguments)s
-            ) {
-                board {
+                board_id: "{board_id}",
+                duplicate_type: {duplicate_type},
+                {', '.join(arguments) if arguments else ""}
+            ) {{
+                board {{
                     id
-                }
-            }
-        }"""  # noqa: UP031
-            % {
-                "board_id": board_id,
-                "duplicate_type": duplicate_type,
-                "arguments": ", ".join(arguments) if arguments else "",
-            }
-        )
-
-        return self.client.execute(query)
-
-    def archive_board(self: "BoardResource", board_id: str) -> dict:
-        """This method allows you to archive a board.
-
-        Args:
-            board_id (str): The board's unique identifier.
-
-        Returns:
-            dict: dictionary response from the monday.com GraphQL API
-        """
-        query = (
-            """
-            mutation {
-                archive_board(board_id: "%s") {
-                    id
-                }
-            }
-        """
-            % board_id
-        )
-
-        return self.client.execute(query)
-
-    def delete_board(self: "BoardResource", board_id: str) -> dict:
-        """Allows you to delete a board via the API.
-
-        Args:
-            board_id (str): Id of the board to be deleted
-
-        Returns:
-            dict: dictionary response from the monday.com GraphQL API
-        """
-        query = (
-            """
-            mutation {
-                delete_board(board_id: "%s") {
-                    id
-                }
-            }
-        """
-            % board_id
-        )
+                }}
+            }}
+        }}"""
 
         return self.client.execute(query)
 
@@ -298,10 +215,9 @@ class BoardResource(BaseResource):
     ) -> dict:
         """Allows you to update a board via the API.
 
-        Args:
-            board_id (str): Id of the board to be updated
-            board_attribute (str): The board's attribute to update
-            new_value (str): The new attribute value.
+        board_id (str): Id of the board to be updated
+        board_attribute (str): The board's attribute to update
+        new_value (str): The new attribute value.
 
         Returns:
             dict: dictionary response from the monday.com GraphQL API
@@ -313,6 +229,40 @@ class BoardResource(BaseResource):
                 new_value: {json.dumps(new_value)})
         }}"""
 
-        print(query)
-        return {"id": "123"}
-        # return self.client.execute(query)
+        return self.client.execute(query)
+
+    def archive_board(self: "BoardResource", board_id: str) -> dict:
+        """This method allows you to archive a board.
+
+        board_id (str): The board's unique identifier.
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        query = f"""
+            mutation {{
+                archive_board(board_id: "{board_id}") {{
+                    id
+                }}
+            }}
+        """
+
+        return self.client.execute(query)
+
+    def delete_board(self: "BoardResource", board_id: str) -> dict:
+        """Allows you to delete a board via the API.
+
+        board_id (str): Id of the board to be deleted
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        query = f"""
+            mutation {{
+                delete_board(board_id: "{board_id}") {{
+                    id
+                }}
+            }}
+        """
+
+        return self.client.execute(query)
