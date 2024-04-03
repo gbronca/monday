@@ -27,27 +27,26 @@ class NotificationResource(BaseResource):
         If you use a personal API key to make the call, the notification will
         appear to come from the user who installed the app on the account.
 
-        Args:
-            user_id (str): The user's unique identifier.
-            target_id (str): The target's identifier.
-            text (str): The notification text.
-            target_type (Literal["project", "post"]): The target's type: project / post.
-                - Project: sends a notification referring to a specific item or board
-                - Post : sends a notification referring to a specific item's update or
-                reply
+        user_id (str): The user's unique identifier.
+        target_id (str): The target's identifier.
+        text (str): The notification text.
+        target_type (Literal["project", "post"]): The target's type: project / post.
+            - Project: sends a notification referring to a specific item or board
+            - Post : sends a notification referring to a specific item's update or
+            reply
 
         Returns:
             (dict): dictionary response from the API
         """
-        query = """mutation {
+        query = f"""mutation {{
             create_notification (
-                user_id: "%s",
-                target_id: "%s",
-                text: "%s",
-                target_type: %s
-            ) {
+                user_id: "{user_id}",
+                target_id: "{target_id}",
+                text: "{text}",
+                target_type: {target_type}
+            ) {{
                 text
-            }
-        }""" % (user_id, target_id, text, target_type)  # noqa: UP031
+            }}
+        }}"""
 
         return self.client.execute(query)
