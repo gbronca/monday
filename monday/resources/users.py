@@ -1,22 +1,10 @@
 """Class for interacting with the Monday.com API's Users endpoint."""
 
 import json
-from typing import Literal, TypedDict, Unpack
+from typing import Unpack
 
 from monday.resources.base import BaseResource
-
-
-class User(TypedDict, total=False):
-    """Represents a user with optional attributes."""
-
-    emails: list[str] | str
-    ids: list[str] | str
-    kind: Literal["all", "non_guests", "guests", "non_pending"]
-    limit: int
-    name: str
-    newest_first: bool
-    non_active: bool
-    page: int
+from monday.resources.types.users import User
 
 
 class UserResource(BaseResource):
