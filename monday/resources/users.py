@@ -31,8 +31,8 @@ class UserResource(BaseResource):
         Querying users returns one or multiple users.
 
         Kwargs:
-            emails ([str]): A list of users' emails.
-            ids ([str]): A list of users' unique identifiers.
+            emails ([str] | str): A list of users' emails.
+            ids ([str] | str): A list of users' unique identifiers.
             kind (str): The kind of users you want to search by:
                 all, non_guests, guests, non_pending.
             limit (int): Number of users to get.
@@ -54,9 +54,9 @@ class UserResource(BaseResource):
                 else:
                     arguments.append(f"{key}: {json.dumps(value)}")
 
-        query = """query
-        {
-            users %s {
+        query = f"""query
+        {{
+            users {f"({", ".join(arguments)})" if arguments else ""} {{
                 id
                 birthday
                 country_code
@@ -74,26 +74,26 @@ class UserResource(BaseResource):
                 location
                 mobile_phone
                 name
-                out_of_office {
+                out_of_office {{
                     active
                     disable_notifications
                     end_date
                     start_date
                     type
-                }
+                }}
                 phone
                 photo_original
                 photo_small
-                teams {
+                teams {{
                     id
                     name
-                }
+                }}
                 time_zone_identifier
                 title
                 url
                 utc_hours_diff
-            }
-        }""" % (f"({", ".join(arguments)})" if arguments else "")
+            }}
+        }}"""
 
         return self.client.execute(query)
 
