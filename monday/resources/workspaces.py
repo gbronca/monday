@@ -87,18 +87,18 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        query = """mutation {
+        query = f"""mutation {{
             create_workspace (
-                name: "%(name)s",
-                kind: %(kind)s,
-                description: "%(description)s"
-                ) {
+                name: "{name}",
+                kind: {kind},
+                description: "{description}"
+                ) {{
                 id
                 name
                 kind
                 description
-            }
-        }""" % {"name": name, "kind": kind, "description": description}  # noqa: UP031
+            }}
+        }}"""
 
         return self.client.execute(query)
 
