@@ -4,6 +4,7 @@ from .__version__ import __version__
 from .resources import (
     BoardResource,
     NotificationResource,
+    TagResource,
     UserResource,
     VersionResource,
     WorkspaceResource,
@@ -23,6 +24,7 @@ class MondayClient:
             api_key=api_key,
             api_version=api_version,
         )
+        self.tags = TagResource(api_key=api_key, api_version=api_version)
         self.users = UserResource(api_key=api_key, api_version=api_version)
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
         self.workspaces = WorkspaceResource(api_key=api_key, api_version=api_version)
