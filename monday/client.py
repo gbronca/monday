@@ -3,6 +3,7 @@
 from .__version__ import __version__
 from .resources import (
     BoardResource,
+    ColumnResource,
     NotificationResource,
     TagResource,
     UserResource,
@@ -20,6 +21,7 @@ class MondayClient:
         api_version: str | None = None,
     ) -> None:
         self.boards = BoardResource(api_key=api_key, api_version=api_version)
+        self.columns = ColumnResource(api_key=api_key, api_version=api_version)
         self.notifications = NotificationResource(
             api_key=api_key,
             api_version=api_version,
