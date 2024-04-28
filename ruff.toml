@@ -34,7 +34,7 @@ line-length = 88
 indent-width = 4
 
 # Assume Python 3.11
-target-version = "py311"
+target-version = "py312"
 
 [lint]
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
