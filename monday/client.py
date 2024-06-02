@@ -1,6 +1,5 @@
 """Client for the Monday.com API."""
 
-from .__version__ import __version__
 from .resources import (
     BoardResource,
     ColumnResource,
@@ -31,8 +30,8 @@ class MondayClient:
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
         self.workspaces = WorkspaceResource(api_key=api_key, api_version=api_version)
 
-    def __repr__(self: "MondayClient") -> str:  # noqa: D105
-        return f"MondayClient {__version__}"
+    # def __repr__(self: "MondayClient") -> str:  # noqa: D105
+    #     return f"MondayClient {__version__}"
 
-    def __str__(self: "MondayClient") -> str:  # noqa: D105
-        return f"MondayClient {__version__}"
+    # def __str__(self: "MondayClient") -> str:  # noqa: D105
+    #     return f"MondayClient {__version__}"
