@@ -16,7 +16,6 @@ class _TWorkspace(TypedDict, total=False):
 
     ids: list[str] | str
     limit: int
-    # state: Literal["all", "active", "archived", "deleted"]
     order_by: Literal["created_at"]
     page: int
 
