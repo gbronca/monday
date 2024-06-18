@@ -1,10 +1,11 @@
 """This module provides the Workspace class for querying workspaces."""
 
 import json
-from typing import Literal, Unpack
+from typing import Literal
 
 from monday.resources.base import BaseResource
-from monday.resources.types.workspaces import Workspace
+from monday.resources.types.workspaces import WorkspaceKind
+from monday.utils import parse_parameters
 
 
 class WorkspaceResource(BaseResource):
@@ -12,7 +13,13 @@ class WorkspaceResource(BaseResource):
 
     def fetch_workspaces(
         self: "WorkspaceResource",
-        **kwargs: Unpack[Workspace],
+        # **kwargs: Unpack[Workspace],
+        ids: str | list[str] | None = None,
+        kind: WorkspaceKind | None = None,
+        limit: int | None = None,
+        state: Literal["all", "active", "archived", "deleted"] | None = None,
+        order_by: Literal["created_at"] | None = None,
+        page: int | None = None,
     ) -> dict:
         """This method allows you to query workspaces.
 
@@ -31,49 +38,50 @@ class WorkspaceResource(BaseResource):
         Returns:
             (dict): Dict response from the monday.com GraphQL API
         """
-        if kwargs:
-            keys_to_not_dump = {"kind", "state", "order_by"}
-            arguments = [
-                f"{key}: {value if key in keys_to_not_dump else json.dumps(value)}"
-                for key, value in kwargs.items()
-            ]
+        parameters = parse_parameters(locals(), exclude=["kind", "state", "order_by"])
 
-        query = """query
-        {
-            workspaces %s {
+        query = f"""query
+        {{
+            workspaces {f"({", ".join(parameters)})" if parameters else ""} {{
                 id
                 name
-                kind
-                account_product {
+                account_product {{
                     id
-                }
-                description
+                    kind
+                }}
                 created_at
-                owners_subscribers {
+                description
+                is_default_workspace
+                kind
+                owners_subscribers {{
                     id
                     name
                     email
-                }
+                }}
                 state
-                teams_subscribers {
+                team_owners_subscribers {{
                     id
                     name
-                }
-                users_subscribers {
+                }}
+                teams_subscribers {{
+                    id
+                    name
+                }}
+                users_subscribers {{
                     id
                     name
                     email
-                }
-            }
-        }""" % (f"({", ".join(arguments)})" if arguments else "")
+                }}
+            }}
+        }}"""
 
         return self.client.execute(query)
 
     def create_workspace(
         self: "WorkspaceResource",
         name: str,
-        kind: Literal["open", "closed"],
-        description: str = "",
+        kind: WorkspaceKind,
+        description: str | None = None,
     ) -> dict:
         """Allows you to create a new workspace.
 

@@ -1,5 +1,7 @@
 """Provides utility functions for Monday.com API."""
+
 import json
+from typing import Any
 
 
 def monday_json_stringify(value: object) -> str:
@@ -16,3 +18,31 @@ def monday_json_stringify(value: object) -> str:
     # work. The only thing that works is a JSON encoded, JSON encoded string.
 
     return json.dumps(json.dumps(value))
+
+
+def parse_parameters(
+    parameters: dict[str, Any],
+    exclude: list[str] | None = None,
+) -> list[str]:
+    """Parse parameters for a query.
+
+    Args:
+        parameters (dict): The parameters to parse.
+        exclude (list, optional): The parameters to exclude. Defaults to None.
+
+    Returns:
+        list: The parsed parameters.
+    """
+    parameters.pop("self", None)
+    if exclude:
+        return [
+            f"{key}: {value if key in exclude else json.dumps(value)}"
+            for key, value in parameters.items()
+            if value is not None
+        ]
+    else:
+        return [
+            f"{key}: {json.dumps(value)}"
+            for key, value in parameters.items()
+            if value is not None
+        ]
