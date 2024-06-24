@@ -4,7 +4,6 @@ import json
 from typing import Literal
 
 from monday.resources.base import BaseResource
-from monday.resources.types.workspaces import WorkspaceKind
 from monday.utils import parse_parameters
 
 
@@ -13,9 +12,8 @@ class WorkspaceResource(BaseResource):
 
     def fetch_workspaces(
         self: "WorkspaceResource",
-        # **kwargs: Unpack[Workspace],
         ids: str | list[str] | None = None,
-        kind: WorkspaceKind | None = None,
+        kind: Literal["open", "closed"] | None = None,
         limit: int | None = None,
         state: Literal["all", "active", "archived", "deleted"] | None = None,
         order_by: Literal["created_at"] | None = None,
@@ -39,7 +37,6 @@ class WorkspaceResource(BaseResource):
             (dict): Dict response from the monday.com GraphQL API
         """
         parameters = parse_parameters(locals(), exclude=["kind", "state", "order_by"])
-
         query = f"""query
         {{
             workspaces {f"({", ".join(parameters)})" if parameters else ""} {{
@@ -80,7 +77,7 @@ class WorkspaceResource(BaseResource):
     def create_workspace(
         self: "WorkspaceResource",
         name: str,
-        kind: WorkspaceKind,
+        kind: Literal["open", "closed"],
         description: str | None = None,
     ) -> dict:
         """Allows you to create a new workspace.
