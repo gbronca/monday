@@ -15,7 +15,7 @@ class WorkspaceResource(BaseResource):
         ids: str | list[str] | None = None,
         kind: Literal["open", "closed"] | None = None,
         limit: int | None = None,
-        state: Literal["all", "active", "archived", "deleted"] | None = None,
+        state: Literal["active", "all", "archived", "deleted"] | None = None,
         order_by: Literal["created_at"] | None = None,
         page: int | None = None,
     ) -> dict:
