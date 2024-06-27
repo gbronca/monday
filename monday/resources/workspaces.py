@@ -15,9 +15,9 @@ class WorkspaceResource(BaseResource):
         ids: str | list[str] | None = None,
         kind: Literal["open", "closed"] | None = None,
         limit: int | None = None,
-        state: Literal["active", "all", "archived", "deleted"] | None = None,
         order_by: Literal["created_at"] | None = None,
         page: int | None = None,
+        state: Literal["active", "all", "archived", "deleted"] | None = None,
     ) -> dict:
         """This method allows you to query workspaces.
 
@@ -59,10 +59,12 @@ class WorkspaceResource(BaseResource):
                 team_owners_subscribers {{
                     id
                     name
+                    picture_url
                 }}
                 teams_subscribers {{
                     id
                     name
+                    picture_url
                 }}
                 users_subscribers {{
                     id
@@ -96,7 +98,7 @@ class WorkspaceResource(BaseResource):
             create_workspace (
                 name: "{name}",
                 kind: {kind},
-                description: "{description}"
+                {f'description: "{description}"' if description else ""}
                 ) {{
                 id
                 name
@@ -104,29 +106,38 @@ class WorkspaceResource(BaseResource):
                 description
             }}
         }}"""
-
         return self.client.execute(query)
 
     def update_workspace(
         self: "WorkspaceResource",
-        workspace_id: str,
-        attributes: str,
+        id: str,
+        attribute_name: str | None = None,
+        attribute_description: str | None = None,
+        attribute_kind: Literal["open", "closed"] | None = None,
     ) -> dict:
         """Update a workspace via the API.
 
         Args:
-            workspace_id (str): The identifier of the workspace to update.
-            attributes (str): The attribute to update in the workspace as a json string.
-                allowed keys: name, description, kind
-                e.g. {name:"Marketing team", description: "Marketing team workspace"}
+            id (str): The identifier of the workspace to update.
+            attribute_name (str): The new name of the workspace.
+            attribute_description (str): The new description of the workspace.
+            attribute_kind (str): The new kind of the workspace.
 
         Returns:
             dict: The updated workspace information.
         """
+        # att = parse_parameters(locals(), exclude=["attribute_kind"])
+        attributes = [
+            f"{attribute.replace("attribute_", "")}: {
+                value if attribute == "attribute_kind" else json.dumps(value)}"
+            for attribute, value in locals().items()
+            if value and attribute != "self"
+        ]
+
         query = f"""mutation {{
             update_workspace (
-                id: "{workspace_id}",
-                attributes: {attributes}
+                id: "{id}",
+                attributes: {f"{{{", ".join(attributes)}}}" if attributes else ""}
             ) {{
                 id
                 name
@@ -134,7 +145,6 @@ class WorkspaceResource(BaseResource):
                 description
             }}
         }}"""
-
         return self.client.execute(query)
 
     def delete_workspace(self: "WorkspaceResource", workspace_id: str) -> dict:
@@ -157,7 +167,7 @@ class WorkspaceResource(BaseResource):
     def add_users_to_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
-        user_ids: list[str] | str,
+        user_ids: list[str],
         kind: Literal["subscriber", "owner"] = "subscriber",
     ) -> dict:
         """Allows you to add users to a workspace via the API.
@@ -166,15 +176,12 @@ class WorkspaceResource(BaseResource):
 
         Args:
             workspace_id (str): The workspace's unique identifier.
-            user_ids (str | [str]): The ID's of the users to add to the workspace.
+            user_ids ([str]): The ID's of the users to add to the workspace.
             kind (str): Kind of subscribers added: subscriber or owner.
 
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        if not isinstance(user_ids, list):
-            user_ids = [str(user_ids)]
-
         query = f"""mutation
         {{
             add_users_to_workspace (
@@ -191,20 +198,17 @@ class WorkspaceResource(BaseResource):
     def delete_users_from_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
-        user_ids: list[str] | str,
+        user_ids: list[str],
     ) -> dict:
         """Allows you to delete users from a workspace via the API.
 
         Args:
             workspace_id (str): The workspace's unique identifier.
-            user_ids (str | [str]): The IDs of the users to remove from the workspace.
+            user_ids ([str]): The IDs of the users to remove from the workspace.
 
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        if not isinstance(user_ids, list):
-            user_ids = [str(user_ids)]
-
         query = f"""mutation
         {{
             delete_users_from_workspace (
@@ -220,7 +224,7 @@ class WorkspaceResource(BaseResource):
     def add_teams_to_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
-        team_ids: list[str] | str,
+        team_ids: list[str],
         kind: Literal["subscriber", "owner"] = "subscriber",
     ) -> dict:
         """Allows you to add teams to a workspace via the API.
@@ -233,9 +237,6 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        if not isinstance(team_ids, list):
-            team_ids = [str(team_ids)]
-
         query = f"""mutation
         {{
             add_teams_to_workspace (
@@ -252,7 +253,7 @@ class WorkspaceResource(BaseResource):
     def delete_teams_from_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
-        team_ids: list[str] | str,
+        team_ids: list[str],
     ) -> dict:
         """Allows you to delete teams from a workspace via the API.
 
@@ -263,9 +264,6 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        if not isinstance(team_ids, list):
-            team_ids = [str(team_ids)]
-
         query = f"""mutation
         {{
             delete_teams_from_workspace (
