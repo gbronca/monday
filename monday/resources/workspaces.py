@@ -110,34 +110,34 @@ class WorkspaceResource(BaseResource):
 
     def update_workspace(
         self: "WorkspaceResource",
-        id: str,
-        attribute_name: str | None = None,
-        attribute_description: str | None = None,
-        attribute_kind: Literal["open", "closed"] | None = None,
+        workspace_id: str,
+        name: str | None = None,
+        description: str | None = None,
+        kind: Literal["open", "closed"] | None = None,
     ) -> dict:
         """Update a workspace via the API.
 
         Args:
-            id (str): The identifier of the workspace to update.
-            attribute_name (str): The new name of the workspace.
-            attribute_description (str): The new description of the workspace.
-            attribute_kind (str): The new kind of the workspace.
+            workspace_id (str): The identifier of the workspace to update.
+            name (str, optional): The new name of the workspace.
+            description (str, optional): The new description of the workspace.
+            kind (str, optional): The new kind of the workspace.
 
         Returns:
             dict: The updated workspace information.
         """
-        # att = parse_parameters(locals(), exclude=["attribute_kind"])
-        attributes = [
-            f"{attribute.replace("attribute_", "")}: {
-                value if attribute == "attribute_kind" else json.dumps(value)}"
-            for attribute, value in locals().items()
-            if value and attribute != "self"
-        ]
+        attributes: list[str] = []
+        if name:
+            attributes.append(f"name: {json.dumps(name)}")
+        if description:
+            attributes.append(f"description: {json.dumps(description)}")
+        if kind:
+            attributes.append(f"kind: {kind}")
 
         query = f"""mutation {{
             update_workspace (
-                id: "{id}",
-                attributes: {f"{{{", ".join(attributes)}}}" if attributes else ""}
+                id: "{workspace_id}",
+                attributes: {{{", ".join(attributes)}}}
             ) {{
                 id
                 name
