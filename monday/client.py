@@ -7,6 +7,7 @@ from .resources import (
     TagResource,
     UserResource,
     VersionResource,
+    WebhookResource,
     WorkspaceResource,
 )
 
@@ -28,6 +29,7 @@ class MondayClient:
         self.tags = TagResource(api_key=api_key, api_version=api_version)
         self.users = UserResource(api_key=api_key, api_version=api_version)
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
+        self.webhooks = WebhookResource(api_key=api_key, api_version=api_version)
         self.workspaces = WorkspaceResource(api_key=api_key, api_version=api_version)
 
     # def __repr__(self: "MondayClient") -> str:  # noqa: D105

@@ -6,6 +6,7 @@ from monday.resources.notifications import NotificationResource
 from monday.resources.tags import TagResource
 from monday.resources.users import UserResource
 from monday.resources.versions import VersionResource
+from monday.resources.webhooks import WebhookResource
 from monday.resources.workspaces import WorkspaceResource
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "TagResource",
     "UserResource",
     "VersionResource",
+    "WebhookResource",
     "WorkspaceResource",
 ]
