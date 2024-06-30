@@ -17,7 +17,7 @@ class VersionResource(BaseResource):
             versions {
                 kind
                 value
-
+                display_name
             }
         }"""
 
@@ -34,7 +34,7 @@ class VersionResource(BaseResource):
             version {
                 kind
                 value
-
+                display_name
             }
         }"""
 
