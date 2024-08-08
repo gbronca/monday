@@ -6,7 +6,7 @@ from monday.resources.base import BaseResource
 class WebhookResource(BaseResource):
     """Represents a resource for querying webhooks."""
 
-    def fetch_webhooks(
+    async def fetch_webhooks(
         self: "WebhookResource",
         board_id: str,
         app_webhooks_only: bool | None = None,
@@ -37,9 +37,9 @@ class WebhookResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def delete_webhook(
+    async def delete_webhook(
         self: "WebhookResource",
         webhook_id: str,
     ) -> dict:
@@ -60,4 +60,4 @@ class WebhookResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
