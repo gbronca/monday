@@ -6,7 +6,7 @@ from monday.resources.base import BaseResource
 class VersionResource(BaseResource):
     """Class for interacting with the Monday.com API's Users endpoint."""
 
-    def fetch_versions(self: "VersionResource") -> dict:
+    async def fetch_versions(self: "VersionResource") -> dict:
         """Versions will return metadata about all available API versions.
 
         Returns:
@@ -21,9 +21,9 @@ class VersionResource(BaseResource):
             }
         }"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def fetch_version(self: "VersionResource") -> dict:
+    async def fetch_version(self: "VersionResource") -> dict:
         """Version will return metadata about the API version used to make a request.
 
         Returns:
@@ -38,4 +38,4 @@ class VersionResource(BaseResource):
             }
         }"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
