@@ -1,16 +1,26 @@
 """Class for interacting with the Monday.com API's Users endpoint."""
 
-import json
-from typing import Unpack
+from typing import Literal
 
 from monday.resources.base import BaseResource
-from monday.resources.types.users import User
+from monday.utils import parse_parameters
 
 
 class UserResource(BaseResource):
     """Class for interacting with the Monday.com API's Users endpoint."""
 
-    def fetch_users(self: "UserResource", **kwargs: Unpack[User]) -> dict:
+    async def fetch_users(
+        self: "UserResource",
+        emails: list[str] | str | None = None,
+        ids: list[str] | str | None = None,
+        kind: Literal["all", "non_guests", "guests", "non_pending"] | None = None,
+        limit: int | None = None,
+        name: str | None = None,
+        page: int | None = None,
+        *,
+        newest_first: bool | None = None,
+        non_active: bool | None = None,
+    ) -> dict:
         """Fetch user(s) data from Monday.com.
 
         Every user in monday.com is a part of an account (i.e an organization) and
@@ -32,19 +42,11 @@ class UserResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        arguments = []
-        if kwargs:
-            for key, value in kwargs.items():
-                if key in ["newest_first", "non_active"]:
-                    arguments.append(f"{key}: {str(value).lower()}")
-                elif key == "kind":
-                    arguments.append(f"{key}: {value}")
-                else:
-                    arguments.append(f"{key}: {json.dumps(value)}")
+        parameters = parse_parameters(locals(), exclude=["kind", "state", "order_by"])
 
         query = f"""query
         {{
-            users {f"({", ".join(arguments)})" if arguments else ""} {{
+            users {f"({", ".join(parameters)})" if parameters else ""} {{
                 id
                 birthday
                 country_code
@@ -83,9 +85,9 @@ class UserResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def fetch_current_user(self: "UserResource") -> dict:
+    async def fetch_current_user(self: "UserResource") -> dict:
         """Returns the user details of the user whose API key is being used.
 
         Returns:
@@ -123,4 +125,4 @@ class UserResource(BaseResource):
             }
         """
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
