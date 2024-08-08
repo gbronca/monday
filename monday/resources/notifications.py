@@ -8,12 +8,12 @@ from monday.resources.base import BaseResource
 class NotificationResource(BaseResource):
     """Class representing a notification resource."""
 
-    def create_notification(
+    async def create_notification(
         self: "NotificationResource",
         user_id: str,
         target_id: str,
         text: str,
-        target_type: Literal["project", "post"],
+        target_type: Literal["Project", "Post"],
     ) -> dict:
         """Allows you to send a notification to the bell icon via the API.
 
@@ -30,7 +30,7 @@ class NotificationResource(BaseResource):
         user_id (str): The user's unique identifier.
         target_id (str): The target's identifier.
         text (str): The notification text.
-        target_type (Literal["project", "post"]): The target's type: project / post.
+        target_type (Literal["project", "post"]): The target's type: Project / Post.
             - Project: sends a notification referring to a specific item or board
             - Post : sends a notification referring to a specific item's update or
             reply
@@ -49,4 +49,4 @@ class NotificationResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
