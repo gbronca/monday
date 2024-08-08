@@ -6,7 +6,7 @@ from monday.resources.base import BaseResource
 class TagResource(BaseResource):
     """Class for interacting with the Monday.com API's Tags endpoint."""
 
-    def fetch_tags(self: "TagResource", tags: list[str] | None = None) -> dict:
+    async def fetch_tags(self: "TagResource", tags: list[str] | None = None) -> dict:
         """Return metadata about one or a collection of the account's public tags.
 
         Public tags are the tags that appear on Main Boards, which are accessible to all
@@ -23,15 +23,15 @@ class TagResource(BaseResource):
 
         query = f"""query {{
             tags (ids: {tags}) {{
-                name
                 color
                 id
+                name
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def create_or_get_tag(
+    async def create_or_get_tag(
         self: "TagResource",
         tag_name: str,
         board_id: str | None = None,
@@ -61,4 +61,4 @@ class TagResource(BaseResource):
             tag_name=tag_name,
         )
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
