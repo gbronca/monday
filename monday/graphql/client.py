@@ -1,8 +1,11 @@
 """Provide a GraphQL client to connect to Monday.com's GraphQL API."""
 
+import asyncio
 import json
 
+import aiofiles  # type: ignore
 import requests  # type: ignore
+from requests import Response
 
 from monday.exceptions import MondayError
 
@@ -21,7 +24,7 @@ class GraphQLClient:
         self.api_key = api_key
         self.api_version = api_version
 
-    def execute(
+    async def execute(
         self: "GraphQLClient",
         query: str,
         variables: dict | None = None,
@@ -36,9 +39,9 @@ class GraphQLClient:
         Returns:
             dict: The response from the GraphQL API.
         """
-        return self._execute(query, variables)
+        return await self._execute(query, variables)
 
-    def _execute(
+    async def _execute(
         self: "GraphQLClient",
         query: str,
         variables: dict | None = None,
@@ -59,19 +62,20 @@ class GraphQLClient:
 
         elif variables.get("file", None) is not None:
             headers.setdefault("content", "multipart/form-data")
-            files = [
-                ("variables[file]", (variables["file"], open(variables["file"], "rb"))),
-            ]
+            async with aiofiles.open(variables["file"], "rb") as var_file:
+                contents = await var_file.read()
+            files = [("variables[file]", (variables["file"], contents))]
 
         try:
-            response = requests.request(
-                "POST",
-                self.endpoint,
+            response: Response = await asyncio.to_thread(
+                requests.get,
+                url=self.endpoint,
                 headers=headers,
                 data=payload,
                 files=files,
                 timeout=120,
             )
+
             response.raise_for_status()
             if "errors" in response.json():
                 json_errors = response.json()["errors"][0]
