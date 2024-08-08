@@ -10,7 +10,7 @@ from monday.utils import parse_parameters
 class WorkspaceResource(BaseResource):
     """Represents a resource for querying workspaces."""
 
-    def fetch_workspaces(
+    async def fetch_workspaces(
         self: "WorkspaceResource",
         ids: str | list[str] | None = None,
         kind: Literal["open", "closed"] | None = None,
@@ -74,9 +74,9 @@ class WorkspaceResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def create_workspace(
+    async def create_workspace(
         self: "WorkspaceResource",
         name: str,
         kind: Literal["open", "closed"],
@@ -106,9 +106,9 @@ class WorkspaceResource(BaseResource):
                 description
             }}
         }}"""
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def update_workspace(
+    async def update_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
         name: str | None = None,
@@ -145,9 +145,9 @@ class WorkspaceResource(BaseResource):
                 description
             }}
         }}"""
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def delete_workspace(self: "WorkspaceResource", workspace_id: str) -> dict:
+    async def delete_workspace(self: "WorkspaceResource", workspace_id: str) -> dict:
         """Allows you to delete a workspace.
 
         Args:
@@ -162,9 +162,9 @@ class WorkspaceResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def add_users_to_workspace(
+    async def add_users_to_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
         user_ids: list[str],
@@ -193,9 +193,9 @@ class WorkspaceResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def delete_users_from_workspace(
+    async def delete_users_from_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
         user_ids: list[str],
@@ -219,9 +219,9 @@ class WorkspaceResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def add_teams_to_workspace(
+    async def add_teams_to_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
         team_ids: list[str],
@@ -248,9 +248,9 @@ class WorkspaceResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
 
-    def delete_teams_from_workspace(
+    async def delete_teams_from_workspace(
         self: "WorkspaceResource",
         workspace_id: str,
         team_ids: list[str],
@@ -274,4 +274,4 @@ class WorkspaceResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
