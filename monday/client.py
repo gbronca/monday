@@ -5,6 +5,7 @@ from .resources import (
     ColumnResource,
     NotificationResource,
     TagResource,
+    UpdateResource,
     UserResource,
     VersionResource,
     WebhookResource,
@@ -27,6 +28,7 @@ class MondayClient:
             api_version=api_version,
         )
         self.tags = TagResource(api_key=api_key, api_version=api_version)
+        self.updates = UpdateResource(api_key=api_key, api_version=api_version)
         self.users = UserResource(api_key=api_key, api_version=api_version)
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
         self.webhooks = WebhookResource(api_key=api_key, api_version=api_version)
