@@ -1,28 +1,30 @@
 """This module provides the Tags class for accessing the Tags endpoint."""
 
 from monday.resources.base import BaseResource
+from monday.utils import parse_parameters
 
 
 class TagResource(BaseResource):
     """Class for interacting with the Monday.com API's Tags endpoint."""
 
-    async def fetch_tags(self: "TagResource", tags: list[str] | None = None) -> dict:
+    async def fetch_tags(
+        self: "TagResource",
+        ids: str | list[str] | None = None,
+    ) -> dict:
         """Return metadata about one or a collection of the account's public tags.
 
         Public tags are the tags that appear on Main Boards, which are accessible to all
         Member and Viewer-level users by default.
 
         Args:
-            tags (list(str), optional): A list of tags' identifiers.
+            ids (str | list(str), optional): A list of tags' identifiers.
 
         Returns:
             (dict): Dict response from the monday.com GraphQL API.
         """
-        if tags is None:
-            tags = []
-
+        parameters = parse_parameters(locals())
         query = f"""query {{
-            tags (ids: {tags}) {{
+            tags {f"({", ".join(parameters)})" if parameters else ""} {{
                 color
                 id
                 name
@@ -50,15 +52,14 @@ class TagResource(BaseResource):
         Returns:
             (dict): Dict response from the monday.com GraphQL API.
         """
-        query = """mutation {{
-            create_or_get_tag ({board_id}, tag_name: "{tag_name}") {{
+        parameters = parse_parameters(locals())
+        query = f"""mutation
+        {{
+            create_or_get_tag {f"({", ".join(parameters)})" if parameters else ""} {{
                 name
                 color
                 id
             }}
-        }}""".format(
-            board_id=f'board_id: "{board_id}"' if board_id else "",
-            tag_name=tag_name,
-        )
+        }}"""
 
         return await self.client.execute(query)
