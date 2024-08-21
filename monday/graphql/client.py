@@ -1,11 +1,9 @@
 """Provide a GraphQL client to connect to Monday.com's GraphQL API."""
 
-import asyncio
 import json
 
-import aiofiles  # type: ignore
-import requests  # type: ignore
-from requests import Response
+import httpx
+from anyio import open_file
 
 from monday.exceptions import MondayError
 
@@ -62,20 +60,19 @@ class GraphQLClient:
 
         elif variables.get("file", None) is not None:
             headers.setdefault("content", "multipart/form-data")
-            async with aiofiles.open(variables["file"], "rb") as var_file:
+            async with await open_file(variables["file"], "rb") as var_file:
                 contents = await var_file.read()
             files = [("variables[file]", (variables["file"], contents))]
 
         try:
-            response: Response = await asyncio.to_thread(
-                requests.get,
-                url=self.endpoint,
-                headers=headers,
-                data=payload,
-                files=files,
-                timeout=120,
-            )
-
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    url=self.endpoint,
+                    headers=headers,
+                    data=payload,
+                    files=files,
+                    timeout=120,
+                )
             response.raise_for_status()
             if "errors" in response.json():
                 json_errors = response.json()["errors"][0]
@@ -87,5 +84,5 @@ class GraphQLClient:
             if "error_message" in response.json():
                 raise MondayError(response.json()["error_message"])
             return response.json()
-        except (requests.HTTPError, json.JSONDecodeError, MondayError) as error:
+        except (httpx.HTTPError, json.JSONDecodeError, MondayError) as error:
             raise error
