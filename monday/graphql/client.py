@@ -73,16 +73,17 @@ class GraphQLClient:
                     files=files,
                     timeout=120,
                 )
-            response.raise_for_status()
-            if "errors" in response.json():
-                json_errors = response.json()["errors"][0]
+                response.raise_for_status()
+                data = response.json()
+            if "errors" in data:
+                json_errors = data["errors"][0]
                 raise (
                     MondayError(json_errors["message"])
                     if "message" in json_errors
                     else MondayError(json_errors)
                 )
-            if "error_message" in response.json():
-                raise MondayError(response.json()["error_message"])
-            return response.json()
+            if "error_message" in data:
+                raise MondayError(data["error_message"])
+            return data
         except (httpx.HTTPError, json.JSONDecodeError, MondayError) as error:
             raise error
