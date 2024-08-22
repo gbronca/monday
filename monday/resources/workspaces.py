@@ -49,7 +49,6 @@ class WorkspaceResource(BaseResource):
                 created_at
                 description
                 is_default_workspace
-                kind
                 owners_subscribers {{
                     id
                     name
@@ -73,6 +72,8 @@ class WorkspaceResource(BaseResource):
                 }}
             }}
         }}"""
+
+        print(query)
 
         return await self.client.execute(query)
 
