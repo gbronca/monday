@@ -1,17 +1,18 @@
 import json
 
 from monday.resources.base import BaseResource
-from monday.resources.types.columns import ColumnType
+from monday.resources.types.types import COLUMNTYPE
+from monday.utils import parse_parameters
 
 
 class ColumnResource(BaseResource):
     """Class for interacting with the Monday.com API's columns endpoint."""
 
-    def fetch_columns(
+    async def fetch_columns(
         self: "ColumnResource",
         board_ids: list[str] | str,
         column_ids: list[str] | str | None = None,
-        types: ColumnType | None = None,
+        types: COLUMNTYPE | None = None,
     ) -> dict:
         """Return metadata about one or a collection of columns.
 
@@ -21,19 +22,15 @@ class ColumnResource(BaseResource):
         Args:
             board_ids (str | [str]): The board's unique identifier.
             column_ids (str | [str]): The column's unique identifier.
-            types (ColumnType): The column's type.
+            types (str): The column's type.
         """
-        column_args: list[str] = []
-
-        if column_ids:
-            column_args.append(f"ids: {json.dumps(column_ids)}")
-        if types:
-            column_args.append(f"types: {types}")
-        column_arguments = f"({', '.join(column_args)})" if column_args else ""
+        args = locals()
+        args.pop("board_ids")
+        parameters = parse_parameters(args, exclude=["types"])
 
         query = f"""query {{
             boards(ids: {json.dumps(board_ids)}) {{
-                columns {column_arguments} {{
+                columns {f"({", ".join(parameters)})" if parameters else ""} {{
                     id
                     title
                     archived
@@ -44,5 +41,6 @@ class ColumnResource(BaseResource):
                 }}
             }}
         }}"""
-
-        return self.client.execute(query)
+        print(query)
+        # return {"query": "query"}
+        return await self.client.execute(query)
