@@ -4,6 +4,7 @@ import json
 from typing import Literal
 
 from monday.resources.base import BaseResource
+from monday.resources.types.types import STATE
 from monday.utils import parse_parameters
 
 
@@ -17,7 +18,9 @@ class WorkspaceResource(BaseResource):
         limit: int | None = None,
         order_by: Literal["created_at"] | None = None,
         page: int | None = None,
-        state: Literal["active", "all", "archived", "deleted"] | None = None,
+        state: STATE | None = None,
+        *,
+        all_fields: bool = False,
     ) -> dict:
         """This method allows you to query workspaces.
 
@@ -37,44 +40,46 @@ class WorkspaceResource(BaseResource):
             (dict): Dict response from the monday.com GraphQL API
         """
         parameters = parse_parameters(locals(), exclude=["kind", "state", "order_by"])
+
+        extra_fields = """
+        account_product {
+                id
+                kind
+            }
+            owners_subscribers {
+                id
+                name
+                email
+            }
+            team_owners_subscribers {
+                id
+                name
+                picture_url
+            }
+            teams_subscribers {
+                id
+                name
+                picture_url
+            }
+            users_subscribers {
+                id
+                name
+                email
+        }"""
+
         query = f"""query
-        {{
+            {{
             workspaces {f"({", ".join(parameters)})" if parameters else ""} {{
                 id
                 name
-                account_product {{
-                    id
-                    kind
-                }}
                 created_at
                 description
                 is_default_workspace
-                owners_subscribers {{
-                    id
-                    name
-                    email
-                }}
                 state
-                team_owners_subscribers {{
-                    id
-                    name
-                    picture_url
-                }}
-                teams_subscribers {{
-                    id
-                    name
-                    picture_url
-                }}
-                users_subscribers {{
-                    id
-                    name
-                    email
-                }}
+                {extra_fields if all_fields else ""}
             }}
         }}"""
-
         print(query)
-
         return await self.client.execute(query)
 
     async def create_workspace(
