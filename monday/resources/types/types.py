@@ -1,6 +1,6 @@
 from typing import Literal
 
-COLUMNTYPE = Literal[
+ColumnType = Literal[
     "auto_number",
     "board_relation",
     "button",
@@ -42,6 +42,10 @@ COLUMNTYPE = Literal[
     "unsupported",
 ]
 
-OrderBy = Literal["created_at", "used_at"]
+ORDER_BY = Literal["created_at", "used_at"]
 
-STATE = Literal["active", "all", "archived", "deleted"]
+State = Literal["active", "all", "archived", "deleted"]
+
+WorkspaceKind = Literal["open", "closed"]
+
+SubscriberKind = Literal["owner", "subscriber"]
