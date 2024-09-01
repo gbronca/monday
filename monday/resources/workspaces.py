@@ -1,10 +1,9 @@
 """This module provides the Workspace class for querying workspaces."""
 
-import json
 from typing import Literal
 
 from monday.resources.base import BaseResource
-from monday.resources.types.types import STATE
+from monday.resources.types.types import State, SubscriberKind, WorkspaceKind
 from monday.utils import parse_parameters
 
 
@@ -14,11 +13,11 @@ class WorkspaceResource(BaseResource):
     async def fetch_workspaces(
         self: "WorkspaceResource",
         ids: str | list[str] | None = None,
-        kind: Literal["open", "closed"] | None = None,
+        kind: WorkspaceKind | None = None,
         limit: int | None = None,
         order_by: Literal["created_at"] | None = None,
         page: int | None = None,
-        state: STATE | None = None,
+        state: State | None = None,
         *,
         all_fields: bool = False,
     ) -> dict:
@@ -39,7 +38,7 @@ class WorkspaceResource(BaseResource):
         Returns:
             (dict): Dict response from the monday.com GraphQL API
         """
-        parameters = parse_parameters(locals(), exclude=["kind", "state", "order_by"])
+        parameters = parse_parameters(locals(), literals=["kind", "state", "order_by"])
 
         extra_fields = """
         account_product {
@@ -85,7 +84,7 @@ class WorkspaceResource(BaseResource):
     async def create_workspace(
         self: "WorkspaceResource",
         name: str,
-        kind: Literal["open", "closed"],
+        kind: WorkspaceKind,
         description: str | None = None,
     ) -> dict:
         """Allows you to create a new workspace.
@@ -100,12 +99,9 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
+        parameters = parse_parameters(locals(), literals=["kind"])
         query = f"""mutation {{
-            create_workspace (
-                name: "{name}",
-                kind: {kind},
-                {f'description: "{description}"' if description else ""}
-                ) {{
+            create_workspace ({", ".join(parameters)}) {{
                 id
                 name
                 kind
@@ -119,7 +115,7 @@ class WorkspaceResource(BaseResource):
         workspace_id: str,
         name: str | None = None,
         description: str | None = None,
-        kind: Literal["open", "closed"] | None = None,
+        kind: WorkspaceKind | None = None,
     ) -> dict:
         """Update a workspace via the API.
 
@@ -132,13 +128,11 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: The updated workspace information.
         """
-        attributes: list[str] = []
-        if name:
-            attributes.append(f"name: {json.dumps(name)}")
-        if description:
-            attributes.append(f"description: {json.dumps(description)}")
-        if kind:
-            attributes.append(f"kind: {kind}")
+        attributes = parse_parameters(
+            locals(),
+            literals=["kind"],
+            exclude=["workspace_id"],
+        )
 
         query = f"""mutation {{
             update_workspace (
@@ -174,7 +168,7 @@ class WorkspaceResource(BaseResource):
         self: "WorkspaceResource",
         workspace_id: str,
         user_ids: list[str],
-        kind: Literal["subscriber", "owner"] = "subscriber",
+        kind: SubscriberKind = "subscriber",
     ) -> dict:
         """Allows you to add users to a workspace via the API.
 
@@ -183,22 +177,17 @@ class WorkspaceResource(BaseResource):
         Args:
             workspace_id (str): The workspace's unique identifier.
             user_ids ([str]): The ID's of the users to add to the workspace.
-            kind (str): Kind of subscribers added: subscriber or owner.
+            kind (str): Kind of subscribers added: owner or subscriber.
 
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        query = f"""mutation
-        {{
-            add_users_to_workspace (
-                workspace_id: "{workspace_id}",
-                user_ids: {json.dumps(user_ids)},
-                kind: {kind}
-            ) {{
+        parameters = parse_parameters(locals(), literals=["kind"])
+        query = f"""mutation {{
+            add_users_to_workspace ({", ".join(parameters)}) {{
                 id
             }}
         }}"""
-
         return await self.client.execute(query)
 
     async def delete_users_from_workspace(
@@ -215,12 +204,9 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        query = f"""mutation
-        {{
-            delete_users_from_workspace (
-                workspace_id: "{workspace_id}",
-                user_ids: {json.dumps(user_ids)}
-            ) {{
+        parameters = parse_parameters(locals())
+        query = f"""mutation{{
+            delete_users_from_workspace ({", ".join(parameters)}) {{
                 id
             }}
         }}"""
@@ -231,7 +217,7 @@ class WorkspaceResource(BaseResource):
         self: "WorkspaceResource",
         workspace_id: str,
         team_ids: list[str],
-        kind: Literal["subscriber", "owner"] = "subscriber",
+        kind: SubscriberKind = "subscriber",
     ) -> dict:
         """Allows you to add teams to a workspace via the API.
 
@@ -243,13 +229,9 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        query = f"""mutation
-        {{
-            add_teams_to_workspace (
-                workspace_id: "{workspace_id}",
-                team_ids: {json.dumps(team_ids)},
-                kind: {kind}
-            ) {{
+        parameters = parse_parameters(locals(), literals=["kind"])
+        query = f"""mutation {{
+            add_teams_to_workspace ({", ".join(parameters)}) {{
                 id
             }}
         }}"""
@@ -270,12 +252,9 @@ class WorkspaceResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        query = f"""mutation
-        {{
-            delete_teams_from_workspace (
-                workspace_id: "{workspace_id}",
-                team_ids: {json.dumps(team_ids)}
-            ) {{
+        parameters = parse_parameters(locals())
+        query = f"""mutation {{
+            delete_teams_from_workspace ({", ".join(parameters)}) {{
                 id
             }}
         }}"""
