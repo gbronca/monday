@@ -22,21 +22,27 @@ def monday_json_stringify(value: object) -> str:
 
 def parse_parameters(
     parameters: dict[str, Any],
+    literals: list[str] | None = None,
     exclude: list[str] | None = None,
 ) -> list[str]:
     """Parse parameters for a query.
 
     Args:
         parameters (dict): The parameters to parse.
-        exclude (list, optional): The parameters to exclude. Defaults to None.
+        literals (list, optional): The literal values. Defaults to None.
+        exclude (list, optional): The keys to exclude. Defaults to None.
 
     Returns:
         list: The parsed parameters.
     """
     parameters.pop("self", None)
+    parameters.pop("all_fields", None)
     if exclude:
+        for key in exclude:
+            parameters.pop(key, None)
+    if literals:
         return [
-            f"{key}: {value if key in exclude else json.dumps(value)}"
+            f"{key}: {value if key in literals else json.dumps(value)}"
             for key, value in parameters.items()
             if value is not None
         ]
