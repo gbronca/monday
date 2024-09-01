@@ -1,8 +1,7 @@
 """Class for interacting with the Monday.com API's Users endpoint."""
 
-from typing import Literal
-
 from monday.resources.base import BaseResource
+from monday.resources.types.types import UserKind
 from monday.utils import parse_parameters
 
 
@@ -13,7 +12,7 @@ class UserResource(BaseResource):
         self: "UserResource",
         emails: list[str] | str | None = None,
         ids: list[str] | str | None = None,
-        kind: Literal["all", "non_guests", "guests", "non_pending"] | None = None,
+        kind: UserKind | None = None,
         limit: int | None = None,
         name: str | None = None,
         page: int | None = None,
@@ -42,7 +41,7 @@ class UserResource(BaseResource):
         Returns:
             dict: dict response from the monday.com GraphQL API
         """
-        parameters = parse_parameters(locals(), exclude=["kind", "state", "order_by"])
+        parameters = parse_parameters(locals(), literals=["kind"])
 
         query = f"""query
         {{

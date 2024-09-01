@@ -45,7 +45,6 @@ ColumnType = Literal[
 ORDER_BY = Literal["created_at", "used_at"]
 
 State = Literal["active", "all", "archived", "deleted"]
-
-WorkspaceKind = Literal["open", "closed"]
-
 SubscriberKind = Literal["owner", "subscriber"]
+WorkspaceKind = Literal["open", "closed"]
+UserKind = Literal["all", "non_guests", "guests", "non_pending"]
