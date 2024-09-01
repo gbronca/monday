@@ -26,8 +26,7 @@ class UpdateResource(BaseResource):
             (dict): dict object with the response from the API
         """
         parameters = parse_parameters(locals())
-        query = f"""query
-        {{
+        query = f"""query {{
             updates {f"({", ".join(parameters)})" if parameters else ""} {{
                 id
                 body
@@ -59,8 +58,7 @@ class UpdateResource(BaseResource):
             (dict): dict object with the response from the API
         """
         parameters = parse_parameters(locals())
-        query = f"""mutation
-        {{
+        query = f"""mutation {{
             create_update {f"({", ".join(parameters)})" if parameters else ""} {{
                 id
             }}
@@ -78,13 +76,11 @@ class UpdateResource(BaseResource):
             (dict): dict object with the response from the API
         """
         parameters = parse_parameters(locals())
-        query = f"""
-            mutation {{
-                like_update ({", ".join(parameters)}) {{
-                    id
-                }}
+        query = f"""mutation {{
+            like_update ({", ".join(parameters)}) {{
+                id
             }}
-        """
+        }}"""
 
         return await self.client.execute(query)
 
@@ -98,8 +94,7 @@ class UpdateResource(BaseResource):
             (dict): dict object with the response from the API
         """
         parameters = parse_parameters(locals())
-        query = f"""mutation
-        {{
+        query = f"""mutation {{
             clear_item_updates ({", ".join(parameters)}) {{
                 id
             }}
@@ -117,13 +112,11 @@ class UpdateResource(BaseResource):
             (dict): dict object with the response from the API
         """
         parameters = parse_parameters(locals())
-        query = f"""
-            mutation {{
-                delete_update ({", ".join(parameters)}) {{
-                    id
-                }}
+        query = f"""mutation {{
+            delete_update ({", ".join(parameters)}) {{
+                id
             }}
-        """
+        }}"""
 
         return await self.client.execute(query)
 
@@ -141,12 +134,10 @@ class UpdateResource(BaseResource):
         Returns:
             (dict): dict object with the response from the API
         """
-        query = f"""
-                mutation ($file: File!) {{
-                    add_file_to_update(update_id: "{update_id}", file: $file) {{
-                        id
-                    }}
-                }}
-            """
+        query = f"""mutation ($file: File!) {{
+            add_file_to_update(update_id: "{update_id}", file: $file) {{
+                id
+            }}
+        }}"""
 
         return await self.client_file_upload.execute(query, variables={"file": file})
