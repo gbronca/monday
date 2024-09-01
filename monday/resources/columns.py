@@ -1,7 +1,7 @@
 import json
 
 from monday.resources.base import BaseResource
-from monday.resources.types.types import COLUMNTYPE
+from monday.resources.types.types import ColumnType
 from monday.utils import parse_parameters
 
 
@@ -12,7 +12,7 @@ class ColumnResource(BaseResource):
         self: "ColumnResource",
         board_ids: list[str] | str,
         column_ids: list[str] | str | None = None,
-        types: COLUMNTYPE | None = None,
+        types: ColumnType | None = None,
     ) -> dict:
         """Return metadata about one or a collection of columns.
 
@@ -24,9 +24,11 @@ class ColumnResource(BaseResource):
             column_ids (str | [str]): The column's unique identifier.
             types (str): The column's type.
         """
-        args = locals()
-        args.pop("board_ids")
-        parameters = parse_parameters(args, exclude=["types"])
+        parameters = parse_parameters(
+            locals(),
+            literals=["types"],
+            exclude=["board_ids"],
+        )
 
         query = f"""query {{
             boards(ids: {json.dumps(board_ids)}) {{
