@@ -1,7 +1,5 @@
 """This module provides the Team class for accessing the Teams endpoint."""
 
-from typing import Literal
-
 from monday.resources.base import BaseResource
 from monday.utils import parse_parameters
 
@@ -109,7 +107,7 @@ class TeamResource(BaseResource):
         self: "TeamResource",
         team_ids: str | list[str],
         workspace_id: str,
-        kind: Literal["subscriber", "owner"] | None = None,
+        kind: SubscriberKind | None = None,
     ) -> dict:
         """Allows you to add teams to a workspace via the API.
 
