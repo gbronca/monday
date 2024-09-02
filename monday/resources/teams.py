@@ -5,6 +5,8 @@ from typing import Literal
 from monday.resources.base import BaseResource
 from monday.utils import parse_parameters
 
+from .types.types import SubscriberKind
+
 
 class TeamResource(BaseResource):
     """Class for interacting with the Monday.com API's Team endpoint."""
@@ -12,41 +14,43 @@ class TeamResource(BaseResource):
     async def fetch_teams(
         self: "TeamResource",
         ids: str | list[str] | None = None,
+        *,
+        include_users: bool = False,
     ) -> dict:
         """Return metadata about one or several teams.
 
         Args:
             ids (str | list(str), optional): The unique identifiers of the
                 specific teams to return.
+            include_users (bool, optional): Whether to include the team's users
 
         Returns:
             (dict): Dict response from the monday.com GraphQL API.
         """
-        parameters = parse_parameters(locals())
+        parameters = parse_parameters(locals(), exclude=["include_users", "users"])
+        users = """users {
+            email
+            id
+            name
+        }"""
         query = f"""query {{
             teams {f"({", ".join(parameters)})" if parameters else ""} {{
                 id
                 name
                 picture_url
                 owners {{
-                    ids
+                    id
                 }}
-                users {{
-                    emails
-                    ids
-                    kind
-                    name
-                }}
+                {users if include_users else ""}
             }}
         }}"""
-
         return await self.client.execute(query)
 
     async def add_teams_to_board(
         self: "TeamResource",
         board_id: str,
         team_ids: str | list[str],
-        kind: Literal["subscriber", "owner"] | None = None,
+        kind: SubscriberKind | None = None,
     ) -> dict:
         """Allows you to add teams to a board via the API.
 
