@@ -5,6 +5,7 @@ from .resources import (
     ColumnResource,
     NotificationResource,
     TagResource,
+    TeamResource,
     UpdateResource,
     UserResource,
     VersionResource,
@@ -28,6 +29,7 @@ class MondayClient:
             api_version=api_version,
         )
         self.tags = TagResource(api_key=api_key, api_version=api_version)
+        self.teams = TeamResource(api_key=api_key, api_version=api_version)
         self.updates = UpdateResource(api_key=api_key, api_version=api_version)
         self.users = UserResource(api_key=api_key, api_version=api_version)
         self.versions = VersionResource(api_key=api_key, api_version=api_version)
