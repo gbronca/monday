@@ -1,8 +1,9 @@
 """This module contains the NotificationResource class for handling notifications."""
 
-from typing import Literal
-
 from monday.resources.base import BaseResource
+from monday.utils import parse_parameters
+
+from .types.types import NotificationTargetType
 
 
 class NotificationResource(BaseResource):
@@ -13,7 +14,7 @@ class NotificationResource(BaseResource):
         user_id: str,
         target_id: str,
         text: str,
-        target_type: Literal["Project", "Post"],
+        target_type: NotificationTargetType,
     ) -> dict:
         """Allows you to send a notification to the bell icon via the API.
 
@@ -38,12 +39,10 @@ class NotificationResource(BaseResource):
         Returns:
             (dict): dictionary response from the API
         """
+        parameters = parse_parameters(locals(), literals=["target_type"])
         query = f"""mutation {{
             create_notification (
-                user_id: "{user_id}",
-                target_id: "{target_id}",
-                text: "{text}",
-                target_type: {target_type}
+                {", ".join(parameters)}
             ) {{
                 text
             }}
