@@ -3,8 +3,9 @@
 from typing import Literal
 
 from monday.resources.base import BaseResource
-from monday.resources.types.types import State, SubscriberKind, WorkspaceKind
 from monday.utils import parse_parameters
+
+from .types.types import State, SubscriberKind, WorkspaceKind
 
 
 class WorkspaceResource(BaseResource):
