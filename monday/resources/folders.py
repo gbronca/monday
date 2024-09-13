@@ -125,7 +125,7 @@ class FolderResource(BaseResource):
 
         return await self.client.execute(query)
 
-    async def delete_folder(self: "FolderResource", folder_id: str):
+    async def delete_folder(self: "FolderResource", folder_id: str) -> dict:
         """Allows you to delete and folder and all its contents.
 
         Args:
@@ -141,4 +141,4 @@ class FolderResource(BaseResource):
             }}
         }}"""
 
-        return self.client.execute(query)
+        return await self.client.execute(query)
