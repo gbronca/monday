@@ -1,4 +1,4 @@
-"""This module provides the Folder class for accessing the Teams endpoint."""
+"""This module provides the Folder class for accessing the Folders endpoint."""
 
 from monday.resources.base import BaseResource
 from monday.utils import parse_parameters
@@ -90,3 +90,55 @@ class FolderResource(BaseResource):
         }}"""
 
         return await self.client.execute(query)
+
+    async def update_folder(
+        self: "FolderResource",
+        folder_id: str,
+        name: str | None = None,
+        color: FolderColor | None = None,
+        parent_folder_id: str | None = None,
+    ) -> dict:
+        """Allows you to update a folder's color, name, or parent folder.
+
+        Args:
+            folder_id (str): The folder's unique identifier.
+            name (str, optional): The folder's new name.
+            color (str, optional): The folder's new color.
+            parent_folder_id (str, optional): The ID of the folder you want to nest
+                the updated one under.
+
+        Returns:
+            (dict): Dictionary response from the monday.com GraphQL API
+        """
+        parameters = parse_parameters(locals())
+        query = f"""mutation {{
+            update_folder ({", ".join(parameters)}) {{
+                id
+                name
+                color
+                parent {{
+                    id
+                    name
+                }}
+            }}
+        }}"""
+
+        return await self.client.execute(query)
+
+    async def delete_folder(self: "FolderResource", folder_id: str):
+        """Allows you to delete and folder and all its contents.
+
+        Args:
+            folder_id (str): Id of the folder to be deleted
+
+        Returns:
+            (dict): Dictionary response from the monday.com GraphQL API
+        """
+        parameters = parse_parameters(locals())
+        query = f"""mutation {{
+            delete_folder ({" ".join(parameters)}) {{
+                id
+            }}
+        }}"""
+
+        return self.client.execute(query)

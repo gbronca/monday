@@ -3,6 +3,8 @@
 from .resources import (
     BoardResource,
     ColumnResource,
+    FolderResource,
+    GroupResource,
     NotificationResource,
     TagResource,
     TeamResource,
@@ -24,6 +26,8 @@ class MondayClient:
     ) -> None:
         self.boards = BoardResource(api_key=api_key, api_version=api_version)
         self.columns = ColumnResource(api_key=api_key, api_version=api_version)
+        self.folders = FolderResource(api_key=api_key, api_version=api_version)
+        self.groups = GroupResource(api_key=api_key, api_version=api_version)
         self.notifications = NotificationResource(
             api_key=api_key,
             api_version=api_version,
