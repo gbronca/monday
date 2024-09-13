@@ -2,6 +2,8 @@
 
 from monday.resources.boards import BoardResource
 from monday.resources.columns import ColumnResource
+from monday.resources.folders import FolderResource
+from monday.resources.groups import GroupResource
 from monday.resources.notifications import NotificationResource
 from monday.resources.tags import TagResource
 from monday.resources.teams import TeamResource
@@ -14,6 +16,8 @@ from monday.resources.workspaces import WorkspaceResource
 __all__ = [
     "BoardResource",
     "ColumnResource",
+    "FolderResource",
+    "GroupResource",
     "NotificationResource",
     "TagResource",
     "TeamResource",
