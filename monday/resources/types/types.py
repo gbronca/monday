@@ -1,5 +1,19 @@
 from typing import Literal
 
+BoardAttributes = Literal["communication", "description", "name"]
+BoardKind = Literal["private", "public", "share"]
+BoardSubscriberKind = Literal["owner", "subscriber"]
+DuplicateBoardType = Literal[
+    "duplicate_board_with_structure",
+    "duplicate_board_with_pulses",
+    "duplicate_board_with_pulses_and_updates",
+]
+NotificationTargetType = Literal["Project", "Post"]
+OrderBy = Literal["created_at", "used_at"]
+State = Literal["active", "all", "archived", "deleted"]
+SubscriberKind = Literal["owner", "subscriber"]
+UserKind = Literal["all", "non_guests", "guests", "non_pending"]
+WorkspaceKind = Literal["open", "closed"]
 ColumnType = Literal[
     "auto_number",
     "board_relation",
@@ -41,13 +55,6 @@ ColumnType = Literal[
     "world_clock",
     "unsupported",
 ]
-
-NotificationTargetType = Literal["Project", "Post"]
-OrderBy = Literal["created_at", "used_at"]
-State = Literal["active", "all", "archived", "deleted"]
-SubscriberKind = Literal["owner", "subscriber"]
-UserKind = Literal["all", "non_guests", "guests", "non_pending"]
-WorkspaceKind = Literal["open", "closed"]
 FolderColor = Literal[
     "AQUAMARINE",
     "BRIGHT_BLUE",

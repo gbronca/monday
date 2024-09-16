@@ -1,7 +1,7 @@
 """Class for interacting with the Monday.com API's Users endpoint."""
 
 from monday.resources.base import BaseResource
-from monday.resources.types.types import UserKind
+from monday.resources.types.types import BoardSubscriberKind, UserKind
 from monday.utils import parse_parameters
 
 
@@ -123,5 +123,54 @@ class UserResource(BaseResource):
                 }
             }
         """
+
+        return await self.client.execute(query)
+
+    async def add_users_to_board(
+        self: "UserResource",
+        board_id: str,
+        user_ids: list[str] | str,
+        kind: BoardSubscriberKind | None = None,
+    ) -> dict:
+        """Allows you to add users to a board.
+
+        Args:
+            board_id (str): The board's unique identifier.
+            user_ids ([str]): List of user ids to subscribe to the board.
+            kind (str): Subscribers kind: subscriber or owner. Default is 'owner'
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        parameters = parse_parameters(locals(), literals=["kind"])
+
+        query = f"""mutation {{
+            add_users_to_board ({", ".join(parameters)}) {{
+                id
+            }}
+        }}"""
+
+        return await self.client.execute(query)
+
+    async def delete_subscribers_from_board(
+        self: "UserResource",
+        board_id: str,
+        user_ids: list[str] | str,
+    ) -> dict:
+        """Allows you to delete subscribers from a board.
+
+        board_id (str): The board's unique identifier.
+        user_ids ([str]): List of user ids to unsubscribe from the board.
+
+        Returns:
+            dict: dictionary response from the monday.com GraphQL API
+        """
+        parameters = parse_parameters(locals())
+
+        query = f"""mutation {{
+            delete_subscribers_from_board ({", ".join(parameters)}) {{
+                id
+            }}
+        }}"""
 
         return await self.client.execute(query)
