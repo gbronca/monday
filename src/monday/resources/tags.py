@@ -1,7 +1,8 @@
 """This module provides the Tags class for accessing the Tags endpoint."""
 
-from monday.resources.base import BaseResource
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
+
+from .base import BaseResource
 
 
 class TagResource(BaseResource):

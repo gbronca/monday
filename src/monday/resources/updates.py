@@ -1,7 +1,8 @@
 """Class for interacting with the Monday.com API's Updates endpoint."""
 
-from monday.resources.base import BaseResource
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
+
+from .base import BaseResource
 
 
 class UpdateResource(BaseResource):

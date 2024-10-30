@@ -1,6 +1,6 @@
 """This module provides the Webhooks class for querying webhooks."""
 
-from monday.resources.base import BaseResource
+from .base import BaseResource
 
 
 class WebhookResource(BaseResource):

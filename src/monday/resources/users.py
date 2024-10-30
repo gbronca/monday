@@ -1,8 +1,9 @@
 """Class for interacting with the Monday.com API's Users endpoint."""
 
-from monday.resources.base import BaseResource
-from monday.resources.types.types import BoardSubscriberKind, UserKind
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
+
+from .base import BaseResource
+from .types.types import BoardSubscriberKind, UserKind
 
 
 class UserResource(BaseResource):

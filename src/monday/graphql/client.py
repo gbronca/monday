@@ -5,7 +5,7 @@ import json
 import httpx
 from anyio import open_file
 
-from monday.exceptions import MondayError
+from src.monday.exceptions import MondayError
 
 
 class GraphQLClient:

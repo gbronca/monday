@@ -2,9 +2,10 @@
 
 import json
 
-from monday.resources.base import BaseResource
-from monday.resources.types.types import ColumnType
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
+
+from .base import BaseResource
+from .types.types import ColumnType
 
 
 class ColumnResource(BaseResource):

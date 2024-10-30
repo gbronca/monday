@@ -1,6 +1,6 @@
 """Class for interacting with the Monday.com API's Versions endpoint."""
 
-from monday.resources.base import BaseResource
+from .base import BaseResource
 
 
 class VersionResource(BaseResource):

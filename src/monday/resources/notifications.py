@@ -1,8 +1,8 @@
 """This module contains the NotificationResource class for handling notifications."""
 
-from monday.resources.base import BaseResource
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
 
+from .base import BaseResource
 from .types.types import NotificationTargetType
 
 

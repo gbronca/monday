@@ -2,9 +2,9 @@
 
 from typing import Literal
 
-from monday.resources.base import BaseResource
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
 
+from .base import BaseResource
 from .types.types import State, SubscriberKind, WorkspaceKind
 
 

@@ -1,5 +1,6 @@
 """BaseResource class for Monday.com API."""
-from monday.graphql.client import GraphQLClient
+
+from src.monday.graphql.client import GraphQLClient
 
 URLS = {
     "prod": "https://api.monday.com/v2",

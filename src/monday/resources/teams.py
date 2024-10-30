@@ -1,8 +1,8 @@
 """This module provides the Team class for accessing the Teams endpoint."""
 
-from monday.resources.base import BaseResource
-from monday.utils import parse_parameters
+from src.monday.utils import parse_parameters
 
+from .base import BaseResource
 from .types.types import SubscriberKind
 
 
