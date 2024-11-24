@@ -5,6 +5,7 @@ from .resources import (
     ColumnResource,
     FolderResource,
     GroupResource,
+    ItemResource,
     NotificationResource,
     TagResource,
     TeamResource,
@@ -28,6 +29,7 @@ class MondayClient:
         self.columns = ColumnResource(api_key=api_key, api_version=api_version)
         self.folders = FolderResource(api_key=api_key, api_version=api_version)
         self.groups = GroupResource(api_key=api_key, api_version=api_version)
+        self.items = ItemResource(api_key=api_key, api_version=api_version)
         self.notifications = NotificationResource(
             api_key=api_key,
             api_version=api_version,

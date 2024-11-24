@@ -4,6 +4,7 @@ from .boards import BoardResource
 from .columns import ColumnResource
 from .folders import FolderResource
 from .groups import GroupResource
+from .items import ItemResource
 from .notifications import NotificationResource
 from .tags import TagResource
 from .teams import TeamResource
@@ -18,6 +19,7 @@ __all__ = [
     "ColumnResource",
     "FolderResource",
     "GroupResource",
+    "ItemResource",
     "NotificationResource",
     "TagResource",
     "TeamResource",
